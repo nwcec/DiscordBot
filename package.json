@@ -1,0 +1,17 @@
+{
+  "name": "discord-chatbot",
+  "version": "1.0.0",
+  "description": "Discord bot with chat and image support",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "node-fetch": "^2.6.7",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
