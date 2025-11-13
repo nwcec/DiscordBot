@@ -1,0 +1,101 @@
+
+{
+  "setup": {
+    "Description": "Set up the ticket system",
+    "SelectPlaceholder": "🎫 Select a ticket type",
+    "success": "✅ Ticket system has been set up successfully!"
+  },
+  "setLang": {
+    "success": "✅ Language has been set to English successfully."
+  },
+  "addSection": {
+    "Description": "Add a new ticket section",
+    "SelectPlaceholder": "Select an option",
+    "success": "✅ Ticket section has been added successfully!",
+    "SectionName": "section-name",
+    "SectionNameDescription": "Name of the section you want to create",
+    "Role": "support-role",
+    "RoleDescription": "Role that will manage this section",
+    "image": "ticket-image",
+    "imageDescription": "Image URL for the ticket embed",
+    "error": "❌ This section already exists!",
+    "emoji": "Section emoji (optional)",
+    "emojiError": "❌ Invalid emoji format"
+  },
+  "deleteSection": {
+    "Description": "Delete a ticket section",
+    "SelectPlaceholder": "Select section to delete",
+    "deleteMessage": "Choose the section you want to delete",
+    "success": "✅ Section has been deleted successfully!"
+  },
+  "editSettings": {
+    "Description": "Configure ticket and log channels",
+    "success": "✅ Channels have been configured successfully!",
+    "error": "❌ Error selecting channels",
+    "category": "Ticket Category",
+    "logs": "Logs Channel",
+    "BACKGROUND": "Ticket Background Image URL",
+    "LINE": "Divider Line Image URL (optional)",
+    "SECTION_TYPE": "Display Type (buttons or list)"
+  },
+  "claim": {
+    "userClaimError": "❌ You cannot claim your own ticket!",
+    "claimedBy": "✅ Ticket claimed by [user]",
+    "notStaff": "❌ You don't have permission to claim tickets!"
+  },
+  "close": {
+    "closedBy": "Ticket will be closed",
+    "confirm": "🔒 Close Ticket",
+    "yes": "Confirm",
+    "no": "Cancel",
+    "reason": "Close Reason",
+    "reasonPlaceholder": "Please provide a reason for closing this ticket..."
+  },
+  "confirmYes": {
+    "ticketClosed": "🔒 Ticket Closed",
+    "openedBy": "Opened By",
+    "claimedBy": "Claimed By",
+    "closedBy": "Closed By",
+    "openTime": "Opened At",
+    "closeTime": "Closed At",
+    "closeReason": "Reason",
+    "noReason": "No reason provided",
+    "noOne": "Not claimed",
+    "viewTicket": "📄 View Transcript",
+    "deleteTimer": "This ticket will be deleted now..."
+  },
+  "confirmNo": {
+    "cancelled": "✅ Ticket closure has been cancelled"
+  },
+  "delete": {
+    "deleted": "✅ Ticket has been deleted successfully",
+    "deleteTimer": "⏱️ This ticket will be deleted in a moment..."
+  },
+  "rename": {
+    "renamed": "✅ Ticket renamed to",
+    "newName": "New Ticket Name",
+    "newNamePlaceholder": "Enter a new name for this ticket...",
+    "modalTitle": "✏️ Rename Ticket",
+    "modalLabel": "New Ticket Name",
+    "nameChanged": "✅ Ticket name has been changed successfully!",
+    "missingPermissions": "❌ You don't have permission to rename this ticket!"
+  },
+  "save": {
+    "ticketClosed": "💾 Ticket Saved",
+    "openedBy": "Opened By",
+    "claimedBy": "Claimed By",
+    "closedBy": "Closed By",
+    "openTime": "Opened At",
+    "closeTime": "Saved At",
+    "download": "📥 Download Transcript",
+    "saved": "✅ Ticket has been saved successfully!"
+  },
+  "select": {
+    "helloUser": "👋 Welcome **[user]** [role]",
+    "claim": "✋ Claim",
+    "close": "🔒 Close",
+    "rename": "✏️ Rename",
+    "created": "✅ Your ticket has been created: [channel]",
+    "alreadyCreated": "❌ You already have an open ticket!"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "serverId": "1403933317493166181",
+  "adminIds": [
+    "1403978629872095262",
+    "1403978629872095262"
+  ],
+  "levelUpMessage": "**Congratulations** {member}! You have now leveled up to **level {level}**",
+  "levelUpChannel": "1403933318088495146",
+  "welcome": {
+    "message": "Please check the rules here: ${rulesChannel}\nFor assistance, open: ${supportChannel}\nNumber: ${memberCount}",
+    "rulesChannelId": "1427686496961560711",
+    "supportChannelId": "1428078957726535772",
+    "embedColor": "#FFD700",
+    "mentionText": "Welcome to DT Organization! ${member} 👋",
+    "channelId": "1403933318088495146"
+  },
+  "roleReward": {
+    "message": "Congratulations! {member} 🎉 You have earned the {role} role!",
+    "channelId": "1403933318088495146",
+    "levelMessages": {}
+  },
+  "commands": {
+    "rank": {
+      "enabled": true,
+      "allowedChannels": [
+        "1403933318088495146"
+      ]
+    },
+    "leaderboard": {
+      "enabled": true,
+      "allowedChannels": [
+        "1403933318088495146"
+      ]
+    }
+  },
+  "adminRoleIds": [
+    "1403978629872095262"
+  ],
+  "tickets": {
+    "categoryId": "1436515973686497402",
+    "logChannelId": "1430648119216832623",
+    "backgroundUrl": "https://g.top4top.io/p_3598op42k0.png",
+    "setupMessage": "📋 **Support Ticket System**\n\nPlease select the type of assistance you need from the dropdown menu below.",
+    "ticketEmbedTitle": "🎫 Support Ticket",
+    "ticketEmbedDescription": "Thank you for contacting support! A member of our team will assist you shortly.\n\n**Please describe your issue in detail below.**"
+  }
+}

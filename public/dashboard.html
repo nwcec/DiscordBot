@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DT Discord Bot Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            visibility: hidden;
+        }
+        
+        body.authenticated {
+            visibility: visible;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+        }
+
+        .menu-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100vh;
+            background: #1e1e2e;
+            box-shadow: -4px 0 15px rgba(0,0,0,0.5);
+            transition: right 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-header {
+            background: #5865F2;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .sidebar-menu {
+            padding: 20px;
+        }
+
+        .menu-item {
+            background: #252538;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            transition: background 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #2d2d42;
+            border-left-color: #5865F2;
+        }
+
+        .menu-item.active {
+            background: #2d2d42;
+            border-left-color: #5865F2;
+        }
+
+        .content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #7289DA;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #2a2a3e;
+            border-radius: 8px;
+            background: #252538;
+            color: #ffffff;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #5865F2;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+
+        .help-text {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .admin-id-list {
+            margin-top: 10px;
+        }
+
+        .admin-id-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .admin-id-item input {
+            flex: 1;
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #5865F2 0%, #7289DA 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid #28a745;
+        }
+
+        .variables {
+            background: #2a2520;
+            border-left: 3px solid #FFD700;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 0.9em;
+        }
+
+        .variables code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #f47fff;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        (async function() {
+            try {
+                const response = await fetch('/api/auth/status', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (!data.authenticated) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                document.body.classList.add('authenticated');
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/';
+            }
+        })();
+    </script>
+    <div class="header">
+        <h1>🤖 DT Discord Bot Dashboard</h1>
+        <div style="display: flex; gap: 10px;">
+            <button class="menu-btn" onclick="logout()" style="background: rgba(220, 53, 69, 0.8);" title="Logout">🚪</button>
+            <button class="menu-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+            <button class="close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item active" onclick="showSection(event, 'home')">🏠 Home</div>
+            <div class="menu-item" onclick="showSection(event, 'level')">📊 Level Settings</div>
+            <div class="menu-item" onclick="showSection(event, 'welcome')">👋 Welcome Settings</div>
+            <div class="menu-item" onclick="showSection(event, 'tickets')">🎫 Tickets Settings</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="success-message" id="successMessage">✅ Settings saved successfully!</div>
+
+        <!-- Home Section -->
+        <div class="section active" id="home-section">
+            <h2>🏠 General Configuration</h2>
+            <form id="homeForm">
+                <div class="form-group">
+                    <label>Server ID (Guild ID)</label>
+                    <input type="text" id="serverId" name="serverId" placeholder="1234567890123456789">
+                    <div class="help-text">Right-click your server icon and select "Copy ID" to get this.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Admin Role IDs</label>
+                    <div class="help-text" style="margin-bottom: 10px;">Enter the Discord role IDs for admins. Users with any of these roles can use all admin commands.</div>
+                    <div id="adminRoleList" class="admin-id-list">
+                        <div class="admin-id-item">
+                            <input type="text" class="admin-role-input" placeholder="1234567890123456789">
+                            <button type="button" class="btn-remove" onclick="removeAdminRole(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add" onclick="addAdminRole()">+ Add Another Role</button>
+                </div>
+
+                <button type="submit" class="btn-save">Save Settings</button>
+            </form>
+        </div>
+
+        <!-- Level Settings Section -->
+        <div class="section" id="level-section">
+            <h2>📊 Level Settings</h2>
+            <form id="levelForm">
+                <div class="form-group">
+                    <label>Rank Command - Allowed Channels</label>
+                    <input type="text" id="rankChannels" name="rankChannels" placeholder="123456789,987654321">
+                    <div class="help-text">Channel IDs where the !rank command can be used. Leave empty to allow in all channels.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Leaderboard Command - Allowed Channels</label>
+                    <input type="text" id="leaderboardChannels" name="leaderboardChannels" placeholder="123456789,987654321">
+                    <div class="help-text">Channel IDs where the !leaderboard command can be used. Leave empty to allow in all channels.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Level Up Message</label>
+                    <textarea id="levelUpMessage" name="levelUpMessage" placeholder="**Congratulations** {member}! You have now leveled up to **level {level}**"></textarea>
+                    <div class="variables">
+                        <strong>Available Variables:</strong><br>
+                        <code>{member}</code> - Mentions the user<br>
+                        <code>{level}</code> - The new level<br>
+                        <code>{xp}</code> - Current XP
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Level Up Message Channel</label>
+                    <input type="text" id="levelUpChannel" name="levelUpChannel" placeholder="Channel ID or leave empty for same channel">
+                    <div class="help-text">Channel where level up messages appear. Leave empty to send in the channel where user leveled up.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Role Reward Message</label>
+                    <textarea id="roleRewardMessage" name="roleRewardMessage" placeholder="Congratulations! 🎉 You have earned the {role} role!"></textarea>
+                    <div class="variables">
+                        <strong>Available Variables:</strong><br>
+                        <code>{role}</code> - The role name<br>
+                        <code>{level}</code> - The level achieved<br>
+                        <code>{user}</code> - The username<br>
+                        <code>{member}</code> - Mentions the user
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Role Reward Message Channel</label>
+                    <input type="text" id="roleRewardChannel" name="roleRewardChannel" placeholder="Channel ID">
+                    <div class="help-text">Channel where role reward messages appear.</div>
+                </div>
+
+                <button type="submit" class="btn-save">Save Level Settings</button>
+            </form>
+        </div>
+
+        <!-- Welcome Settings Section -->
+        <div class="section" id="welcome-section">
+            <h2>👋 Welcome Settings</h2>
+            <form id="welcomeForm">
+                <div class="form-group">
+                    <label>Welcome Mention Text (appears above embed)</label>
+                    <input type="text" id="welcomeMentionText" name="welcomeMentionText" placeholder="Welcome to DT Organization! ${member} 👋">
+                    <div class="help-text">This text appears above the embed. Use ${member} to mention the user.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Welcome Embed Message</label>
+                    <textarea id="welcomeMessage" name="welcomeMessage" placeholder="Please check the rules here: ${rulesChannel}"></textarea>
+                    <div class="variables">
+                        <strong>Available Variables:</strong><br>
+                        <code>${member}</code> - Mentions the new member<br>
+                        <code>${memberCount}</code> - Total member count<br>
+                        <code>${rulesChannel}</code> - Links to rules channel<br>
+                        <code>${supportChannel}</code> - Links to support channel
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Rules Channel ID</label>
+                    <input type="text" id="rulesChannelId" name="rulesChannelId" placeholder="1234567890123456789">
+                    <div class="help-text">Used for the ${rulesChannel} variable in the welcome message.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Support Channel ID</label>
+                    <input type="text" id="supportChannelId" name="supportChannelId" placeholder="1234567890123456789">
+                    <div class="help-text">Used for the ${supportChannel} variable in the welcome message.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Embed Color</label>
+                    <input type="text" id="embedColor" name="embedColor" placeholder="#FFD700">
+                    <div class="help-text">Color of the welcome message embed (hex code).</div>
+                </div>
+
+                <button type="submit" class="btn-save">Save Welcome Settings</button>
+            </form>
+        </div>
+
+        <!-- Tickets Settings Section -->
+        <div class="section" id="tickets-section">
+            <h2>🎫 Tickets Settings</h2>
+            <form id="ticketsForm">
+                <div class="form-group">
+                    <label>Ticket Category ID</label>
+                    <input type="text" id="ticketCategoryId" name="categoryId" placeholder="1234567890123456789">
+                    <div class="help-text">The Discord category where ticket channels will be created.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Log Channel ID</label>
+                    <input type="text" id="ticketLogChannelId" name="logChannelId" placeholder="1234567890123456789">
+                    <div class="help-text">Channel where ticket logs and transcripts will be sent.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Background Image URL</label>
+                    <input type="text" id="ticketBackgroundUrl" name="backgroundUrl" placeholder="https://g.top4top.io/p_3598op42k0.png">
+                    <div class="help-text">URL of the background image for ticket embeds.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Setup Message</label>
+                    <textarea id="ticketSetupMessage" name="setupMessage" placeholder="📋 **Support Ticket System**\n\nPlease select the type of assistance you need from the dropdown menu below."></textarea>
+                    <div class="help-text">The message shown above the ticket selection dropdown.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ticket Embed Title</label>
+                    <input type="text" id="ticketEmbedTitle" name="ticketEmbedTitle" placeholder="🎫 Support Ticket">
+                    <div class="help-text">Title of the embed shown when a ticket is created.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ticket Embed Description</label>
+                    <textarea id="ticketEmbedDescription" name="ticketEmbedDescription" placeholder="Thank you for contacting support! A member of our team will assist you shortly.\n\n**Please describe your issue in detail below.**"></textarea>
+                    <div class="help-text">Description shown in the ticket embed.</div>
+                </div>
+
+                <button type="submit" class="btn-save">Save Ticket Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('open');
+            }
+        }
+
+        function showSection(event, sectionName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            toggleSidebar();
+        }
+        
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    localStorage.removeItem('sessionToken');
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout failed. Please try again.');
+            }
+        }
+
+        function addAdminRole() {
+            const adminRoleList = document.getElementById('adminRoleList');
+            const newItem = document.createElement('div');
+            newItem.className = 'admin-id-item';
+            newItem.innerHTML = `
+                <input type="text" class="admin-role-input" placeholder="1234567890123456789">
+                <button type="button" class="btn-remove" onclick="removeAdminRole(this)">Remove</button>
+            `;
+            adminRoleList.appendChild(newItem);
+        }
+
+        function removeAdminRole(btn) {
+            const adminRoleList = document.getElementById('adminRoleList');
+            if (adminRoleList.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('You must have at least one admin role!');
+            }
+        }
+
+        function showSuccess() {
+            const msg = document.getElementById('successMessage');
+            msg.style.display = 'block';
+            // Smooth scroll to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        function getAuthHeaders() {
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+
+        async function loadConfig() {
+            try {
+                const headers = getAuthHeaders();
+                if (!headers) return;
+                
+                const response = await fetch('/api/config', {
+                    headers: headers,
+                    credentials: 'include'
+                });
+                const config = await response.json();
+
+                document.getElementById('serverId').value = config.serverId || '';
+                
+                const adminRoleList = document.getElementById('adminRoleList');
+                adminRoleList.innerHTML = '';
+                const adminRoleIds = config.adminRoleIds || [''];
+                adminRoleIds.forEach((id, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'admin-id-item';
+                    item.innerHTML = `
+                        <input type="text" class="admin-role-input" placeholder="1234567890123456789" value="${id}">
+                        <button type="button" class="btn-remove" onclick="removeAdminRole(this)">Remove</button>
+                    `;
+                    adminRoleList.appendChild(item);
+                });
+
+                document.getElementById('rankChannels').value = config.commands?.rank?.allowedChannels?.join(',') || '';
+                document.getElementById('leaderboardChannels').value = config.commands?.leaderboard?.allowedChannels?.join(',') || '';
+                
+                document.getElementById('levelUpMessage').value = config.levelUpMessage || '**Congratulations** {member}! You have now leveled up to **level {level}**';
+                document.getElementById('levelUpChannel').value = config.levelUpChannel || '';
+                
+                document.getElementById('roleRewardMessage').value = config.roleReward?.message || 'Congratulations! 🎉 You have earned the {role} role!';
+                document.getElementById('roleRewardChannel').value = config.roleReward?.channelId || '';
+
+                document.getElementById('welcomeMentionText').value = config.welcome?.mentionText || 'Welcome to DT Organization! ${member} 👋';
+                document.getElementById('welcomeMessage').value = config.welcome?.message || '';
+                document.getElementById('rulesChannelId').value = config.welcome?.rulesChannelId || '';
+                document.getElementById('supportChannelId').value = config.welcome?.supportChannelId || '';
+                document.getElementById('embedColor').value = config.welcome?.embedColor || '#FFD700';
+
+                document.getElementById('ticketCategoryId').value = config.tickets?.categoryId || '';
+                document.getElementById('ticketLogChannelId').value = config.tickets?.logChannelId || '';
+                document.getElementById('ticketBackgroundUrl').value = config.tickets?.backgroundUrl || 'https://g.top4top.io/p_3598op42k0.png';
+                document.getElementById('ticketSetupMessage').value = config.tickets?.setupMessage || '📋 **Support Ticket System**\n\nPlease select the type of assistance you need from the dropdown menu below.';
+                document.getElementById('ticketEmbedTitle').value = config.tickets?.ticketEmbedTitle || '🎫 Support Ticket';
+                document.getElementById('ticketEmbedDescription').value = config.tickets?.ticketEmbedDescription || 'Thank you for contacting support! A member of our team will assist you shortly.\n\n**Please describe your issue in detail below.**';
+            } catch (error) {
+                console.error('Error loading config:', error);
+            }
+        }
+
+        document.getElementById('homeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const adminRoleIds = Array.from(document.querySelectorAll('.admin-role-input'))
+                .map(input => input.value.trim())
+                .filter(id => id);
+
+            const data = {
+                serverId: document.getElementById('serverId').value,
+                adminRoleIds: adminRoleIds
+            };
+
+            try {
+                const headers = getAuthHeaders();
+                if (!headers) return;
+                
+                const response = await fetch('/api/config/home', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    showSuccess();
+                }
+            } catch (error) {
+                alert('Error saving settings: ' + error.message);
+            }
+        });
+
+        document.getElementById('levelForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                rankChannels: document.getElementById('rankChannels').value.split(',').map(s => s.trim()).filter(s => s),
+                leaderboardChannels: document.getElementById('leaderboardChannels').value.split(',').map(s => s.trim()).filter(s => s),
+                levelUpMessage: document.getElementById('levelUpMessage').value,
+                levelUpChannel: document.getElementById('levelUpChannel').value,
+                roleRewardMessage: document.getElementById('roleRewardMessage').value,
+                roleRewardChannel: document.getElementById('roleRewardChannel').value
+            };
+
+            try {
+                const headers = getAuthHeaders();
+                if (!headers) return;
+                
+                const response = await fetch('/api/config/level', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showSuccess();
+                }
+            } catch (error) {
+                alert('Error saving settings: ' + error.message);
+            }
+        });
+
+        document.getElementById('welcomeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                mentionText: document.getElementById('welcomeMentionText').value,
+                message: document.getElementById('welcomeMessage').value,
+                rulesChannelId: document.getElementById('rulesChannelId').value,
+                supportChannelId: document.getElementById('supportChannelId').value,
+                embedColor: document.getElementById('embedColor').value
+            };
+
+            try {
+                const headers = getAuthHeaders();
+                if (!headers) return;
+                
+                const response = await fetch('/api/config/welcome', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    showSuccess();
+                }
+            } catch (error) {
+                alert('Error saving settings: ' + error.message);
+            }
+        });
+
+        document.getElementById('ticketsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                categoryId: document.getElementById('ticketCategoryId').value,
+                logChannelId: document.getElementById('ticketLogChannelId').value,
+                backgroundUrl: document.getElementById('ticketBackgroundUrl').value,
+                setupMessage: document.getElementById('ticketSetupMessage').value,
+                ticketEmbedTitle: document.getElementById('ticketEmbedTitle').value,
+                ticketEmbedDescription: document.getElementById('ticketEmbedDescription').value
+            };
+
+            try {
+                const headers = getAuthHeaders();
+                if (!headers) return;
+                
+                const response = await fetch('/api/config/tickets', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    showSuccess();
+                }
+            } catch (error) {
+                alert('Error saving settings: ' + error.message);
+            }
+        });
+
+        loadConfig();
+    </script>
+</body>
+</html>
